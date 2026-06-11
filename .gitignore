@@ -1,0 +1,7 @@
+venv
+data/
+__pycache__/
+*.onnx
+runs/
+*.ipynb_checkpoints
+.DS_Store

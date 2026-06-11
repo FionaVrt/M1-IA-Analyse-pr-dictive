@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>CNN EuroSAT</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            text-align: center;
+            background-color: #f5f5f5;
+        }
+        h1 { color: #333; }
+        .zone {
+            border: 2px dashed #aaa;
+            padding: 30px;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+        }
+        img {
+            max-width: 200px;
+            margin: 10px auto;
+            display: block;
+            border-radius: 8px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover { background-color: #45a049; }
+        #resultat {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2196F3;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🛰️ Classification EuroSAT</h1>
+    <p>Envoie une image satellite — le CNN prédit la classe !</p>
+
+    <div class="zone">
+        <input type="file" id="fichier" accept="image/*" onchange="afficherImage()">
+        <img id="preview" src="" style="display:none">
+        <br>
+        <button onclick="predire()">Prédire</button>
+    </div>
+
+    <div id="resultat"></div>
+
+    <script>
+        function afficherImage() {
+            const fichier = document.getElementById('fichier').files[0];
+            const preview = document.getElementById('preview');
+            preview.src = URL.createObjectURL(fichier);
+            preview.style.display = 'block';
+            document.getElementById('resultat').innerText = '';
+        }
+
+        async function predire() {
+            const fichier = document.getElementById('fichier').files[0];
+            if (!fichier) {
+                alert('Choisis une image !');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fichier);
+
+            document.getElementById('resultat').innerText = '⏳ Analyse en cours...';
+
+            const response = await fetch('http://127.0.0.1:8000/predict', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            document.getElementById('resultat').innerText = '🌍 Classe : ' + data.classe;
+        }
+    </script>
+</body>
+</html>
